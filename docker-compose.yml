@@ -19,9 +19,18 @@ services:
     env_file:
       - .env
     ports:
-      - "${APP_PORT}:3000"
+      - "${BACKEND_PORT}:3000"
     depends_on:
       - mysql
+
+  frontend:
+    build: ./frontend
+    container_name: react_frontend
+    restart: always
+    ports:
+      - "${FRONTEND_PORT}:80"
+    depends_on:
+      - backend
 
   nginx:
     image: nginx:latest
