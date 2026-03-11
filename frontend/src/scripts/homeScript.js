@@ -4,10 +4,20 @@ import api from "../utils/api";
 function useHome() {
 
   const [employees, setEmployees] = useState([]);
+  const [search, setSearch] = useState("");
 
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [addingEmployee, setAddingEmployee] = useState(false);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+
+  const filteredEmployees = employees.filter(emp =>
+    emp.name.toLowerCase().includes(search.toLowerCase()) ||
+    emp.email.toLowerCase().includes(search.toLowerCase())
+  );
 
   const fetchEmployees = () => {
     api.get("/employees")
@@ -50,7 +60,7 @@ function useHome() {
 
   };
 
-  // lưu chỉnh sửa
+  // update employee
   const handleUpdate = (e) => {
 
     e.preventDefault();
@@ -71,17 +81,57 @@ function useHome() {
 
   };
 
+  // mở modal add
+  const handleOpenAdd = () => {
+    setEditingEmployee(null);
+    setAddingEmployee(true);
+    setName("");
+    setEmail("");
+    setPassword("");
+  };
+
+  // tạo employee
+  const handleCreate = (e) => {
+
+    e.preventDefault();
+
+    api.post("/employees", {
+      name,
+      email,
+      password
+    })
+      .then(() => {
+
+        fetchEmployees();
+        setAddingEmployee(false);
+
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+  };
+
   return {
     employees,
+    filteredEmployees,
+    search,
+    setSearch,
     handleDelete,
     handleEdit,
     handleUpdate,
+    handleOpenAdd,
+    handleCreate,
     editingEmployee,
+    addingEmployee,
     name,
     email,
+    password,
     setName,
     setEmail,
-    setEditingEmployee
+    setPassword,
+    setEditingEmployee,
+    setAddingEmployee
   };
 
 }

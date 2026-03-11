@@ -4,16 +4,24 @@ import useHome from "../scripts/homeScript";
 function Home() {
 
   const {
-    employees,
+    filteredEmployees,
+    search,
+    setSearch,
     handleDelete,
     handleEdit,
     handleUpdate,
+    handleOpenAdd,
+    handleCreate,
     editingEmployee,
+    addingEmployee,
     name,
     email,
+    password,
     setName,
     setEmail,
-    setEditingEmployee
+    setPassword,
+    setEditingEmployee,
+    setAddingEmployee
   } = useHome();
 
   return (
@@ -22,6 +30,26 @@ function Home() {
 
       <h2>Employee List</h2>
 
+      {/* SEARCH + ADD */}
+      <div className="top-bar">
+
+        <input
+          className="search-input"
+          placeholder="Search name or email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <button
+          className="add-btn"
+          onClick={handleOpenAdd}
+        >
+          Add Employee
+        </button>
+
+      </div>
+
+      {/* TABLE */}
       <table className="employee-table">
 
         <thead>
@@ -35,7 +63,7 @@ function Home() {
 
         <tbody>
 
-          {employees.map((emp, index) => (
+          {filteredEmployees && filteredEmployees.map((emp, index) => (
 
             <tr key={emp.id}>
               <td>{index + 1}</td>
@@ -69,8 +97,7 @@ function Home() {
       </table>
 
 
-      {/* OVERLAY EDIT */}
-
+      {/* EDIT MODAL */}
       {editingEmployee && (
 
         <div className="overlay">
@@ -102,6 +129,60 @@ function Home() {
                 <button
                   type="button"
                   onClick={() => setEditingEmployee(null)}
+                >
+                  Cancel
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+      {/* ADD MODAL */}
+      {addingEmployee && (
+
+        <div className="overlay">
+
+          <div className="modal">
+
+            <h3>Add Employee</h3>
+
+            <form onSubmit={handleCreate}>
+
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Name"
+              />
+
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+              />
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+              />
+
+              <div className="modal-buttons">
+
+                <button type="submit">
+                  Create
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAddingEmployee(false)}
                 >
                   Cancel
                 </button>
