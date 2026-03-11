@@ -17,11 +17,15 @@ function Home() {
     name,
     email,
     password,
+    errors,
     setName,
     setEmail,
     setPassword,
     setEditingEmployee,
-    setAddingEmployee
+    setAddingEmployee,
+    deleteEmployee,
+    setDeleteEmployee,
+    confirmDelete
   } = useHome();
 
   return (
@@ -81,7 +85,7 @@ function Home() {
 
                 <button
                   className="delete-btn"
-                  onClick={() => handleDelete(emp.id)}
+                  onClick={() => handleDelete(emp)}
                 >
                   Delete
                 </button>
@@ -114,11 +118,15 @@ function Home() {
                 placeholder="Name"
               />
 
+              {errors.name && <p className="error-text">{errors.name}</p>}
+
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
               />
+
+              {errors.email && <p className="error-text">{errors.email}</p>}
 
               <div className="modal-buttons">
 
@@ -161,11 +169,15 @@ function Home() {
                 placeholder="Name"
               />
 
+              {errors.name && <p className="error-text">{errors.name}</p>}
+
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
               />
+
+              {errors.email && <p className="error-text">{errors.email}</p>}
 
               <input
                 type="password"
@@ -173,6 +185,8 @@ function Home() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
               />
+
+              {errors.password && <p className="error-text">{errors.password}</p>}
 
               <div className="modal-buttons">
 
@@ -190,6 +204,45 @@ function Home() {
               </div>
 
             </form>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+      {/* DELETE MODAL */}
+      {deleteEmployee && (
+
+        <div className="overlay">
+
+          <div className="modal">
+
+            <h3>Delete Employee</h3>
+
+            <p className="delete-text">
+              Are you sure you want to delete
+              <b> {deleteEmployee.name}</b> ?
+            </p>
+
+            <div className="modal-buttons">
+
+              <button
+                className="delete-confirm"
+                onClick={confirmDelete}
+              >
+                Delete
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDeleteEmployee(null)}
+              >
+                Cancel
+              </button>
+
+            </div>
 
           </div>
 

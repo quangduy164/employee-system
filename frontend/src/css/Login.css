@@ -46,3 +46,30 @@ body {
 .login-button:hover {
   background: #0056b3;
 }
+
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+
+.delete-text {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+.delete-confirm {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-confirm:hover {
+  background: #b52a37;
+}

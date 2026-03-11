@@ -195,3 +195,10 @@
 .add-btn:hover {
   background: #218838;
 }
+
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin-top: -12px;
+  margin-bottom: 12px;
+}

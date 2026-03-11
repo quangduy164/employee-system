@@ -8,10 +8,13 @@ function useHome() {
 
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [addingEmployee, setAddingEmployee] = useState(false);
+  const [deleteEmployee, setDeleteEmployee] = useState(null);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [errors, setErrors] = useState({});
 
 
   const filteredEmployees = employees.filter(emp =>
@@ -33,22 +36,56 @@ function useHome() {
     fetchEmployees();
   }, []);
 
-  const handleDelete = (id) => {
+  const handleDelete = (emp) => {
+    setDeleteEmployee(emp);
+  };
 
-    if (!window.confirm("Are you sure to delete this employee?")) {
-      return;
-    }
+  const confirmDelete = () => {
 
-    api.delete(`/employees/${id}`)
+    api.delete(`/employees/${deleteEmployee.id}`)
       .then(() => {
+
         setEmployees(prev =>
-          prev.filter(emp => emp.id !== id)
+          prev.filter(emp => emp.id !== deleteEmployee.id)
         );
+
+        setDeleteEmployee(null);
+
       })
       .catch(err => {
         console.log(err);
       });
 
+  };
+
+
+  const validate = (isAdd = false) => {
+
+    let newErrors = {};
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (isAdd) {
+      if (!password) {
+        newErrors.password = "Password is required";
+      } else if (password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters";
+      }
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   // mở modal edit
@@ -64,6 +101,8 @@ function useHome() {
   const handleUpdate = (e) => {
 
     e.preventDefault();
+
+    if (!validate()) return;
 
     api.put(`/employees/${editingEmployee.id}`, {
       name,
@@ -81,6 +120,8 @@ function useHome() {
 
   };
 
+
+
   // mở modal add
   const handleOpenAdd = () => {
     setEditingEmployee(null);
@@ -94,6 +135,8 @@ function useHome() {
   const handleCreate = (e) => {
 
     e.preventDefault();
+
+    if (!validate(true)) return;
 
     api.post("/employees", {
       name,
@@ -124,16 +167,19 @@ function useHome() {
     handleCreate,
     editingEmployee,
     addingEmployee,
+    deleteEmployee,
     name,
     email,
     password,
+    errors,
     setName,
     setEmail,
     setPassword,
     setEditingEmployee,
-    setAddingEmployee
+    setAddingEmployee,
+    setDeleteEmployee,
+    confirmDelete
   };
-
 }
 
 export default useHome;

@@ -6,6 +6,7 @@ function Login() {
   const {
     email,
     password,
+    errors,
     setEmail,
     setPassword,
     handleLogin
@@ -20,12 +21,16 @@ function Login() {
         <h2>Employee Login</h2>
 
         <input
-          type="email"
+          type="text"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="login-input"
         />
+
+        {errors.email && (
+          <p className="error-text">{errors.email}</p>
+        )}
 
         <input
           type="password"
@@ -34,6 +39,10 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           className="login-input"
         />
+
+        {errors.password && (
+          <p className="error-text">{errors.password}</p>
+        )}
 
         <button className="login-button">
           Login
