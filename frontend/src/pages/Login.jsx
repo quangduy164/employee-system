@@ -1,41 +1,15 @@
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import "../css/Login.css";
+import useLogin from "../scripts/loginScript";
 
 function Login() {
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const navigate = useNavigate();
-
-  const handleLogin = async (e) => {
-
-    e.preventDefault();
-
-    try {
-
-      const res = await axios.post("/api/login", {
-        email,
-        password
-      });
-
-      const token = res.data.token;
-
-      localStorage.setItem("token", token);
-
-      alert("Login success");
-
-      navigate("/home");
-
-    } catch (error) {
-
-      alert("Login failed");
-
-    }
-
-  };
+  const {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    handleLogin
+  } = useLogin();
 
   return (
 
@@ -51,7 +25,6 @@ function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="login-input"
-          required
         />
 
         <input
@@ -60,10 +33,9 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="login-input"
-          required
         />
 
-        <button type="submit" className="login-button">
+        <button className="login-button">
           Login
         </button>
 

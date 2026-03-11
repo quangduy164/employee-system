@@ -11,7 +11,8 @@ COPY . .
 
 RUN npm run build
 
-# serve bằng nginx
+
+# nginx serve react
 FROM nginx:alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html

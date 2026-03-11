@@ -4,7 +4,7 @@ const employeeService = require("../services/employeeService");
 // CREATE
 exports.createEmployee = async (req, res) => {
   try {
-
+    res.set("Cache-Control", "no-store");
     const employee = await employeeService.createEmployeeService(req.body);
 
     res.status(201).json(employee);
@@ -18,7 +18,7 @@ exports.createEmployee = async (req, res) => {
 // GET ALL
 exports.getEmployees = async (req, res) => {
   try {
-
+    res.set("Cache-Control", "no-store");
     const employees = await employeeService.getEmployeesService();
 
     res.json(employees);
@@ -32,7 +32,7 @@ exports.getEmployees = async (req, res) => {
 // GET BY ID
 exports.getEmployeeById = async (req, res) => {
   try {
-
+    res.set("Cache-Control", "no-store");
     const employee = await employeeService.getEmployeeByIdService(req.params.id);
 
     res.json(employee);
@@ -51,7 +51,7 @@ exports.getEmployeeById = async (req, res) => {
 // UPDATE
 exports.updateEmployee = async (req, res) => {
   try {
-
+    res.set("Cache-Control", "no-store");
     const employee = await employeeService.updateEmployeeService(
       req.params.id,
       req.body
@@ -73,7 +73,7 @@ exports.updateEmployee = async (req, res) => {
 // DELETE
 exports.deleteEmployee = async (req, res) => {
   try {
-
+    res.set("Cache-Control", "no-store");
     const result = await employeeService.deleteEmployeeService(req.params.id);
 
     res.json(result);
