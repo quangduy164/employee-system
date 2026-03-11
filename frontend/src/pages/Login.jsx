@@ -16,7 +16,7 @@ function Login() {
 
     try {
 
-      const res = await axios.post("http://localhost/api/login", {
+      const res = await axios.post("/api/login", {
         email,
         password
       });
@@ -27,7 +27,7 @@ function Login() {
 
       alert("Login success");
 
-      navigate("/employees");
+      navigate("/home");
 
     } catch (error) {
 
