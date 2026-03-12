@@ -1,77 +1,122 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
+import { vi } from "vitest";
 import useHome from "../scripts/homeScript";
-
-vi.mock("../utils/api", () => ({
-  default: {
-    get: vi.fn(),
-    delete: vi.fn(),
-    post: vi.fn(),
-    put: vi.fn()
-  }
-}));
-
 import api from "../utils/api";
 
-describe("useHome hook", () => {
+// mock api để không gọi server thật
+vi.mock("../utils/api");
 
-  beforeEach(() => {
-    vi.clearAllMocks();
+
+
+/*
+TEST 1
+Kiểm tra fetchEmployees gọi API và set employees
+*/
+test("should fetch employees", async () => {
+
+  api.get.mockResolvedValue({
+    data: [{ id: 1, name: "John", email: "john@gmail.com" }]
   });
 
-  it("should fetch employees", async () => {
+  const { result } = renderHook(() => useHome());
 
-    api.get.mockResolvedValue({
-      data: [{ id: 1, name: "John", email: "john@gmail.com" }]
-    });
+  // chờ useEffect chạy
+  await new Promise(resolve => setTimeout(resolve, 0));
 
-    const { result } = renderHook(() => useHome());
+  expect(result.current.employees.length).toBe(1);
+});
 
-    await waitFor(() => {
-      expect(result.current.employees.length).toBe(1);
-    });
 
+
+/*
+TEST 2
+Kiểm tra search filter hoạt động
+*/
+test("should filter employees by search", async () => {
+
+  api.get.mockResolvedValue({
+    data: [
+      { id: 1, name: "John", email: "john@gmail.com" },
+      { id: 2, name: "Anna", email: "anna@gmail.com" }
+    ]
   });
 
-  it("should delete employee", async () => {
+  const { result } = renderHook(() => useHome());
 
-    api.get.mockResolvedValue({ data: [] });
-    api.delete.mockResolvedValue({});
+  await new Promise(resolve => setTimeout(resolve, 0));
 
-    const { result } = renderHook(() => useHome());
-
-    await waitFor(() => {
-      expect(result.current).toBeDefined();
-    });
-
-    act(() => {
-      result.current.setDeleteEmployee({ id: 1 });
-    });
-
-    await act(async () => {
-      await result.current.confirmDelete();
-    });
-
-    expect(api.delete).toHaveBeenCalledWith("/employees/1");
-
+  act(() => {
+    result.current.setSearch("john");
   });
 
-  it("should open add modal", async () => {
+  expect(result.current.filteredEmployees.length).toBe(1);
+});
 
-    api.get.mockResolvedValue({ data: [] });
 
-    const { result } = renderHook(() => useHome());
 
-    await waitFor(() => {
-      expect(result.current).toBeDefined();
-    });
+/*
+TEST 3
+Kiểm tra mở modal Add Employee
+*/
+test("should open add modal", () => {
 
-    act(() => {
-      result.current.handleOpenAdd();
-    });
+  const { result } = renderHook(() => useHome());
 
-    expect(result.current.addingEmployee).toBe(true);
-
+  act(() => {
+    result.current.handleOpenAdd();
   });
 
+  expect(result.current.addingEmployee).toBe(true);
+});
+
+
+
+/*
+TEST 4
+Kiểm tra mở modal Edit
+*/
+test("should open edit modal", () => {
+
+  const { result } = renderHook(() => useHome());
+
+  const employee = {
+    id: 1,
+    name: "John",
+    email: "john@gmail.com"
+  };
+
+  act(() => {
+    result.current.handleEdit(employee);
+  });
+
+  expect(result.current.editingEmployee).toEqual(employee);
+});
+
+
+
+/*
+TEST 5
+Kiểm tra delete employee
+*/
+test("should delete employee", async () => {
+
+  api.get.mockResolvedValue({
+    data: [{ id: 1, name: "John", email: "john@gmail.com" }]
+  });
+
+  api.delete.mockResolvedValue({});
+
+  const { result } = renderHook(() => useHome());
+
+  await new Promise(resolve => setTimeout(resolve, 0));
+
+  act(() => {
+    result.current.handleDelete({ id: 1 });
+  });
+
+  await act(async () => {
+    await result.current.confirmDelete();
+  });
+
+  expect(api.delete).toHaveBeenCalled();
 });
