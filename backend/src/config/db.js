@@ -24,6 +24,12 @@ async function connectDB() {
   }
 }
 
-connectDB();
+/*
+  Chỉ connect database khi KHÔNG phải môi trường test
+  Khi Jest chạy thì NODE_ENV = test nên đoạn này sẽ bị bỏ qua
+*/
+if (process.env.NODE_ENV !== "test") {
+  connectDB();
+}
 
 module.exports = sequelize;
