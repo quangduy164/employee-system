@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import api from "../utils/api";
 
 function useHome() {
-
   const [employees, setEmployees] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -16,20 +15,18 @@ function useHome() {
 
   const [errors, setErrors] = useState({});
 
-
-  const filteredEmployees = employees.filter(emp =>
+  const filteredEmployees = employees.filter((emp) =>
     emp.name.toLowerCase().includes(search.toLowerCase()) ||
     emp.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const fetchEmployees = () => {
-    api.get("/employees")
-      .then(res => {
-        setEmployees(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  const fetchEmployees = async () => {
+    try {
+      const res = await api.get("/employees");
+      setEmployees(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -40,29 +37,24 @@ function useHome() {
     setDeleteEmployee(emp);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
+    if (!deleteEmployee) return;
 
-    api.delete(`/employees/${deleteEmployee.id}`)
-      .then(() => {
+    try {
+      await api.delete(`/employees/${deleteEmployee.id}`);
 
-        setEmployees(prev =>
-          prev.filter(emp => emp.id !== deleteEmployee.id)
-        );
+      setEmployees((prev) =>
+        prev.filter((emp) => emp.id !== deleteEmployee.id)
+      );
 
-        setDeleteEmployee(null);
-
-      })
-      .catch(err => {
-        console.log(err);
-      });
-
+      setDeleteEmployee(null);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-
   const validate = (isAdd = false) => {
-
-    let newErrors = {};
-
+    const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!name.trim()) {
@@ -84,45 +76,33 @@ function useHome() {
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
-  // mở modal edit
   const handleEdit = (emp) => {
-
     setEditingEmployee(emp);
     setName(emp.name);
     setEmail(emp.email);
-
   };
 
-  // update employee
-  const handleUpdate = (e) => {
-
+  const handleUpdate = async (e) => {
     e.preventDefault();
 
     if (!validate()) return;
 
-    api.put(`/employees/${editingEmployee.id}`, {
-      name,
-      email
-    })
-      .then(() => {
-
-        fetchEmployees();
-        setEditingEmployee(null);
-
-      })
-      .catch(err => {
-        console.log(err);
+    try {
+      await api.put(`/employees/${editingEmployee.id}`, {
+        name,
+        email,
       });
 
+      fetchEmployees();
+      setEditingEmployee(null);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-
-
-  // mở modal add
   const handleOpenAdd = () => {
     setEditingEmployee(null);
     setAddingEmployee(true);
@@ -131,28 +111,23 @@ function useHome() {
     setPassword("");
   };
 
-  // tạo employee
-  const handleCreate = (e) => {
-
+  const handleCreate = async (e) => {
     e.preventDefault();
 
     if (!validate(true)) return;
 
-    api.post("/employees", {
-      name,
-      email,
-      password
-    })
-      .then(() => {
-
-        fetchEmployees();
-        setAddingEmployee(false);
-
-      })
-      .catch(err => {
-        console.log(err);
+    try {
+      await api.post("/employees", {
+        name,
+        email,
+        password,
       });
 
+      fetchEmployees();
+      setAddingEmployee(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return {
@@ -178,7 +153,7 @@ function useHome() {
     setEditingEmployee,
     setAddingEmployee,
     setDeleteEmployee,
-    confirmDelete
+    confirmDelete,
   };
 }
 

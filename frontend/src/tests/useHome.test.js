@@ -114,9 +114,7 @@ test("should delete employee", async () => {
     result.current.handleDelete({ id: 1 });
   });
 
-  await act(async () => {
-    await result.current.confirmDelete();
-  });
+  await result.current.confirmDelete();
 
   expect(api.delete).toHaveBeenCalled();
 });
