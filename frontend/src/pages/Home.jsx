@@ -30,7 +30,7 @@ function Home() {
 
   return (
 
-    <div className="home-container">
+    <main className="home-container">
 
       <h2>Employee List</h2>
 
@@ -250,7 +250,7 @@ function Home() {
 
       )}
 
-    </div>
+    </main>
 
   );
 }

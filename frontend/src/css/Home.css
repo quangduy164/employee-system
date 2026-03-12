@@ -16,7 +16,7 @@
 }
 
 .employee-table th {
-  background: #007bff;
+  background: #0056b3;
   color: white;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .delete-btn {
-  background: red;
+  background: #c82333;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -185,7 +185,7 @@
 
 .add-btn {
   padding: 10px 16px;
-  background: #28a745;
+  background: #1e7e34;
   color: white;
   border: none;
   border-radius: 6px;
@@ -193,7 +193,7 @@
 }
 
 .add-btn:hover {
-  background: #218838;
+  background: #155724;
 }
 
 .error-text {
