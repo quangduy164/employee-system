@@ -20,7 +20,7 @@ vi.mock("../utils/api", () => ({
 
 import api from "../utils/api";
 
-describe("Confirm Delete", () => {
+describe("Confirm Delete", async () => {
 
   it("should delete employee after confirm", async () => {
 
