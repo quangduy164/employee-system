@@ -25,6 +25,7 @@ exports.verifyToken = (req, res, next) => {
     next();
 
   } catch (error) {
+    console.error("JWT verification failed:", error.message);
     return res.status(403).json({ message: "Invalid or expired token" });
   }
 };

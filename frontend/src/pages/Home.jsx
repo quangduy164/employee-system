@@ -67,7 +67,7 @@ function Home() {
 
         <tbody>
 
-          {filteredEmployees && filteredEmployees.map((emp, index) => (
+          {filteredEmployees?.map((emp, index) => (
 
             <tr key={emp.id}>
               <td>{index + 1}</td>
@@ -222,8 +222,8 @@ function Home() {
             <h3>Delete Employee</h3>
 
             <p className="delete-text">
-              Are you sure you want to delete
-              <b> {deleteEmployee.name}</b> ?
+              Are you sure you want to delete{" "}
+              <b>{deleteEmployee.name}</b>?
             </p>
 
             <div className="modal-buttons">

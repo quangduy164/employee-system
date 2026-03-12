@@ -1,6 +1,6 @@
 .home-container {
   padding: 40px;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
 }
 
 .employee-table {
@@ -118,7 +118,7 @@
 /* save button */
 
 .modal-buttons button[type="submit"] {
-  background: #007bff;
+  background: #0056b3;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -128,7 +128,7 @@
 }
 
 .modal-buttons button[type="submit"]:hover {
-  background: #0056b3;
+  background: #004494;
 }
 
 

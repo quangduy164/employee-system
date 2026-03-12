@@ -15,21 +15,17 @@ const sequelize = new Sequelize(
 );
 
 async function connectDB() {
-  try {
-    await sequelize.authenticate();
-    console.log("MySQL Connected");
-  } catch (error) {
-    console.log("⏳ MySQL chưa sẵn sàng, thử lại sau 3s...");
-    setTimeout(connectDB, 3000);
+  while (true) {
+    try {
+      await sequelize.authenticate();
+      console.log("MySQL Connected");
+      break;
+    } catch (error) {
+      console.error("❌ MySQL connection failed:", error.message);
+      console.log("⏳ Retry in 3 seconds...");
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
   }
 }
 
-/*
-  Chỉ connect database khi KHÔNG phải môi trường test
-  Khi Jest chạy thì NODE_ENV = test nên đoạn này sẽ bị bỏ qua
-*/
-if (process.env.NODE_ENV !== "test") {
-  connectDB();
-}
-
-module.exports = sequelize;
+module.exports = { sequelize, connectDB };

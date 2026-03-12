@@ -12,13 +12,10 @@ describe("Database config", () => {
   let authenticateMock;
 
   beforeEach(() => {
-
-    // reset module cache
     jest.resetModules();
 
     authenticateMock = jest.fn();
 
-    // mock Sequelize trước khi require db.js
     jest.doMock("sequelize", () => {
       return {
         Sequelize: jest.fn(() => ({
@@ -26,70 +23,60 @@ describe("Database config", () => {
         }))
       };
     });
-
   });
 
   // ================= INIT SEQUELIZE =================
   test("should initialize Sequelize instance", () => {
 
-    process.env.NODE_ENV = "test";
+    const { sequelize } = require("../config/db");
 
-    const sequelize = require("../config/db");
-
-    // kiểm tra instance được tạo
     expect(sequelize).toBeDefined();
 
   });
 
-
   // ================= CONNECT SUCCESS =================
   test("should log success when database connects", async () => {
 
-    process.env.NODE_ENV = "development";
-
-    // giả lập authenticate thành công
     authenticateMock.mockResolvedValue(true);
 
     const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => { });
 
-    require("../config/db");
+    const { connectDB } = require("../config/db");
 
-    // đợi async chạy
-    await Promise.resolve();
+    await connectDB();
 
-    // kiểm tra log kết nối thành công
     expect(consoleSpy).toHaveBeenCalledWith("MySQL Connected");
 
     consoleSpy.mockRestore();
 
   });
 
-
   // ================= CONNECT FAIL =================
   test("should retry when database connection fails", async () => {
 
-    process.env.NODE_ENV = "development";
+    jest.useFakeTimers();
 
-    // giả lập authenticate lỗi
-    authenticateMock.mockRejectedValue(new Error("DB error"));
+    authenticateMock
+      .mockRejectedValueOnce(new Error("DB error"))
+      .mockResolvedValueOnce(true);
 
-    const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => { });
-    const timeoutSpy = jest.spyOn(global, "setTimeout");
+    const consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => { });
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => { });
 
-    require("../config/db");
+    const { connectDB } = require("../config/db");
 
-    await Promise.resolve();
+    const promise = connectDB();
 
-    // kiểm tra log retry
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "⏳ MySQL chưa sẵn sàng, thử lại sau 3s..."
-    );
+    // chạy timer 3s
+    await jest.advanceTimersByTimeAsync(3000);
 
-    // kiểm tra retry sau 3s
-    expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 3000);
+    await promise;
 
-    consoleSpy.mockRestore();
-    timeoutSpy.mockRestore();
+    expect(consoleLogSpy).toHaveBeenCalledWith("⏳ Retry in 3 seconds...");
+    expect(consoleErrorSpy).toHaveBeenCalled();
+
+    consoleLogSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
 
   });
 
