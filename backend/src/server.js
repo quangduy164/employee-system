@@ -18,6 +18,7 @@ async function startServer() {
 
 // không chạy server khi test
 if (process.env.NODE_ENV !== "test") {
+  // eslint-disable-next-line sonarjs/prefer-top-level-await
   startServer().catch((error) => {
     console.error("Server start failed:", error);
   });

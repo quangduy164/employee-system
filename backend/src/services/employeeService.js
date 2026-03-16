@@ -1,11 +1,12 @@
 const Employee = require("../models/employee");
 const bcrypt = require("bcrypt");
 
+const SALT_ROUNDS = 10;
 
 // CREATE
 exports.createEmployeeService = async (data) => {
 
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS);
 
   const employee = await Employee.create({
     name: data.name,
@@ -13,31 +14,36 @@ exports.createEmployeeService = async (data) => {
     password: hashedPassword
   });
 
-  return employee;
+  return {
+    id: employee.id,
+    name: employee.name,
+    email: employee.email
+  };
 };
-
 
 // GET ALL
 exports.getEmployeesService = async () => {
 
-  const employees = await Employee.findAll();
+  return Employee.findAll({
+    attributes: { exclude: ["password"] }
+  });
 
-  return employees;
 };
-
 
 // GET BY ID
 exports.getEmployeeByIdService = async (id) => {
 
-  const employee = await Employee.findByPk(id);
+  const employee = await Employee.findByPk(id, {
+    attributes: { exclude: ["password"] }
+  });
 
   if (!employee) {
     throw new Error("Employee not found");
   }
 
   return employee;
-};
 
+};
 
 // UPDATE
 exports.updateEmployeeService = async (id, data) => {
@@ -48,11 +54,18 @@ exports.updateEmployeeService = async (id, data) => {
     throw new Error("Employee not found");
   }
 
-  await employee.update(data);
+  await employee.update({
+    name: data.name ?? employee.name,
+    email: data.email ?? employee.email
+  });
 
-  return employee;
+  return {
+    id: employee.id,
+    name: employee.name,
+    email: employee.email
+  };
+
 };
-
 
 // DELETE
 exports.deleteEmployeeService = async (id) => {
@@ -66,4 +79,5 @@ exports.deleteEmployeeService = async (id) => {
   await employee.destroy();
 
   return { message: "Employee deleted" };
+
 };
