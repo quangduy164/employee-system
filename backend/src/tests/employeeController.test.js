@@ -1,8 +1,12 @@
 const employeeController = require("../controllers/employeeController");
 const employeeService = require("../services/employeeService");
+const { validationResult } = require("express-validator");
 
-// mock toàn bộ service để controller test độc lập
 jest.mock("../services/employeeService");
+
+jest.mock("express-validator", () => ({
+  validationResult: jest.fn()
+}));
 
 describe("Employee Controller", () => {
 
@@ -11,21 +15,26 @@ describe("Employee Controller", () => {
 
   beforeEach(() => {
 
-    // giả lập request
+    validationResult.mockReturnValue({
+      isEmpty: () => true,
+      array: () => []
+    });
+
     req = {
-      body: { name: "John", position: "Developer" },
-      params: { id: 1 }
+      body: {
+        name: "John",
+        email: "john@test.com",
+        password: "123456"
+      },
+      params: { id: "1" }
     };
 
-    // giả lập response
     res = {
-      set: jest.fn(),
       status: jest.fn().mockReturnThis(),
       json: jest.fn()
     };
 
     jest.clearAllMocks();
-
   });
 
   // ================= CREATE EMPLOYEE =================
@@ -33,21 +42,14 @@ describe("Employee Controller", () => {
 
     test("should create employee successfully", async () => {
 
-      // giả lập service trả về employee
       const mockEmployee = { id: 1, name: "John" };
+
       employeeService.createEmployeeService.mockResolvedValue(mockEmployee);
 
       await employeeController.createEmployee(req, res);
 
-      // kiểm tra header cache
-      expect(res.set).toHaveBeenCalledWith("Cache-Control", "no-store");
-
-      // kiểm tra status code
       expect(res.status).toHaveBeenCalledWith(201);
-
-      // kiểm tra dữ liệu trả về
       expect(res.json).toHaveBeenCalledWith(mockEmployee);
-
     });
 
     test("should return 500 if service throws error", async () => {
@@ -59,8 +61,9 @@ describe("Employee Controller", () => {
       await employeeController.createEmployee(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "DB error" });
-
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Internal server error"
+      });
     });
 
   });
@@ -76,9 +79,7 @@ describe("Employee Controller", () => {
 
       await employeeController.getEmployees(req, res);
 
-      expect(res.set).toHaveBeenCalledWith("Cache-Control", "no-store");
       expect(res.json).toHaveBeenCalledWith(mockEmployees);
-
     });
 
     test("should return 500 if service throws error", async () => {
@@ -90,8 +91,9 @@ describe("Employee Controller", () => {
       await employeeController.getEmployees(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "DB error" });
-
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Internal server error"
+      });
     });
 
   });
@@ -108,7 +110,6 @@ describe("Employee Controller", () => {
       await employeeController.getEmployeeById(req, res);
 
       expect(res.json).toHaveBeenCalledWith(mockEmployee);
-
     });
 
     test("should return 404 when employee not found", async () => {
@@ -120,8 +121,9 @@ describe("Employee Controller", () => {
       await employeeController.getEmployeeById(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Employee not found" });
-
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Employee not found"
+      });
     });
 
     test("should return 500 for other errors", async () => {
@@ -133,8 +135,9 @@ describe("Employee Controller", () => {
       await employeeController.getEmployeeById(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "DB error" });
-
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Internal server error"
+      });
     });
 
   });
@@ -151,7 +154,6 @@ describe("Employee Controller", () => {
       await employeeController.updateEmployee(req, res);
 
       expect(res.json).toHaveBeenCalledWith(updatedEmployee);
-
     });
 
     test("should return 404 if employee not found", async () => {
@@ -163,8 +165,9 @@ describe("Employee Controller", () => {
       await employeeController.updateEmployee(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Employee not found" });
-
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Employee not found"
+      });
     });
 
     test("should return 500 for other errors", async () => {
@@ -176,8 +179,9 @@ describe("Employee Controller", () => {
       await employeeController.updateEmployee(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "DB error" });
-
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Internal server error"
+      });
     });
 
   });
@@ -194,7 +198,6 @@ describe("Employee Controller", () => {
       await employeeController.deleteEmployee(req, res);
 
       expect(res.json).toHaveBeenCalledWith(result);
-
     });
 
     test("should return 404 if employee not found", async () => {
@@ -206,8 +209,9 @@ describe("Employee Controller", () => {
       await employeeController.deleteEmployee(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Employee not found" });
-
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Employee not found"
+      });
     });
 
     test("should return 500 for other errors", async () => {
@@ -219,7 +223,99 @@ describe("Employee Controller", () => {
       await employeeController.deleteEmployee(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "DB error" });
+      expect(res.json).toHaveBeenCalledWith({
+        error: "Internal server error"
+      });
+    });
+
+  });
+
+
+  describe("Employee Controller - extra coverage", () => {
+
+    test("should return 400 when validation fails", async () => {
+
+      validationResult.mockReturnValue({
+        isEmpty: () => false,
+        array: () => [{ msg: "Invalid input" }]
+      });
+
+      await employeeController.createEmployee(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Invalid input" });
+
+    });
+
+    test("should return 400 for invalid name", async () => {
+
+      req.body.name = "";
+
+      await employeeController.createEmployee(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Invalid name" });
+
+    });
+
+    test("should return 400 for invalid email", async () => {
+
+      req.body.email = "invalidemail";
+
+      await employeeController.createEmployee(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Invalid email" });
+
+    });
+
+    test("should return 400 for invalid password", async () => {
+
+      req.body.password = "123";
+
+      await employeeController.createEmployee(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Invalid password" });
+
+    });
+
+    test("should return 400 for invalid employee id (getEmployeeById)", async () => {
+
+      req.params.id = "abc";
+
+      await employeeController.getEmployeeById(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid employee id"
+      });
+
+    });
+
+    test("should return 400 for invalid employee id (updateEmployee)", async () => {
+
+      req.params.id = "abc";
+
+      await employeeController.updateEmployee(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid employee id"
+      });
+
+    });
+
+    test("should return 400 for invalid employee id (deleteEmployee)", async () => {
+
+      req.params.id = "abc";
+
+      await employeeController.deleteEmployee(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid employee id"
+      });
 
     });
 
