@@ -107,13 +107,9 @@ jobs:
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli
 
-      # tạo .env để dùng trong config
-      - name: Create .env
-        run: echo "SERVER_IP=$SERVER_IP" > .env
-
       - name: Run Lighthouse CI on Azure
         run: |
           lhci autorun \
-            --collect.url=http://${{ secrets.SERVER_IP }} \
-            --collect.url=http://${{ secrets.SERVER_IP }}/home \
+            --collect.url=https://tqa-test.deha.vn \
+            --collect.url=https://tqa-test.deha.vn/home \
             --collect.numberOfRuns=1
