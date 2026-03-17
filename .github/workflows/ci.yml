@@ -112,4 +112,5 @@ jobs:
           lhci autorun \
             --collect.url=https://tqa-test.deha.vn \
             --collect.url=https://tqa-test.deha.vn/home \
-            --collect.numberOfRuns=1
+            --collect.numberOfRuns=1 \
+            --collect.settings.chromeFlags="--headless --no-sandbox --disable-gpu"
