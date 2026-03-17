@@ -1,29 +1,29 @@
 module.exports = async (browser) => {
   const page = await browser.newPage();
 
-  // vào đúng trang
   await page.goto("https://tqa-test.deha.vn", {
     waitUntil: "networkidle2"
   });
 
-  // đợi React render form
+  // đợi form login
   await page.waitForSelector('input[placeholder="Email"]');
 
-  // nhập dữ liệu
+  // nhập login
   await page.type('input[placeholder="Email"]', "duy@gmail.com");
   await page.type('input[placeholder="Password"]', "123456");
 
-  // submit
   await Promise.all([
     page.click('button.login-button'),
     page.waitForNavigation({ waitUntil: "networkidle2" })
   ]);
 
-  // đợi redirect sang /home
-  await page.waitForTimeout(2000);
+  // ✅ ĐỢI HOME LOAD (QUAN TRỌNG NHẤT)
+  await page.waitForSelector('input[placeholder="Search name or email..."]');
 
-  // lấy token từ localStorage để gửi kèm header Authorization
+  // lấy token
   const token = await page.evaluate(() => localStorage.getItem("token"));
+
+  await page.close();
 
   return {
     headers: {
