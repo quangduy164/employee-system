@@ -56,5 +56,12 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ~/employee-system
+            cd frontend
+            npm run build
+            sudo mkdir -p /var/www/frontend
+            sudo rm -rf /var/www/frontend/*
+            sudo cp -r dist/* /var/www/frontend/
+            sudo systemctl reload nginx
+            cd ..
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
