@@ -1,25 +1,28 @@
 module.exports = async (browser) => {
   const page = await browser.newPage();
 
-  // 1. vào đúng trang login
-  await page.goto("https://tqa-test.deha.vn/login", {
+  // vào đúng trang
+  await page.goto("https://tqa-test.deha.vn", {
     waitUntil: "networkidle2"
   });
 
-  // 2. nhập email + password (FIX selector)
+  // đợi React render form
+  await page.waitForSelector('input[placeholder="Email"]');
+
+  // nhập dữ liệu
   await page.type('input[placeholder="Email"]', "duy@gmail.com");
   await page.type('input[placeholder="Password"]', "123456");
 
-  // 3. submit form
+  // submit
   await Promise.all([
     page.click('button.login-button'),
     page.waitForNavigation({ waitUntil: "networkidle2" })
   ]);
 
-  // 4. đợi redirect (React thường chậm)
+  // đợi redirect sang /home
   await page.waitForTimeout(2000);
 
-  // 5. lấy cookie
+  // lấy token từ localStorage để gửi kèm header Authorization
   const token = await page.evaluate(() => localStorage.getItem("token"));
 
   return {
