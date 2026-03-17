@@ -58,7 +58,7 @@ function Home() {
 
         <thead>
           <tr>
-            <th>TT</th>
+            <th>STT</th>
             <th>Name</th>
             <th>Email</th>
             <th>Action</th>

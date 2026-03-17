@@ -108,9 +108,4 @@ jobs:
         run: npm install -g @lhci/cli
 
       - name: Run Lighthouse CI on Azure
-        run: |
-          lhci autorun \
-            --collect.url=https://tqa-test.deha.vn \
-            --collect.url=https://tqa-test.deha.vn/home \
-            --collect.numberOfRuns=1 \
-            --collect.settings.chromeFlags="--headless --no-sandbox --disable-gpu"
+        run: lhci autorun
