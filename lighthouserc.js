@@ -2,9 +2,14 @@ module.exports = {
   ci: {
     collect: {
       url: [
+        "https://tqa-test.deha.vn",
         "https://tqa-test.deha.vn/home"
       ],
-      puppeteerScript: "lighthouse-login.js"
+      numberOfRuns: 1,
+      puppeteerScript: "lighthouse-login.js",
+      settings: {
+        chromeFlags: "--headless --no-sandbox --disable-gpu"
+      }
     }
   }
 };
