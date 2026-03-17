@@ -8,6 +8,8 @@ jest.mock("express-validator", () => ({
   validationResult: jest.fn()
 }));
 
+jest.spyOn(console, "error").mockImplementation(() => { });
+
 describe("Employee Controller", () => {
 
   let req;
