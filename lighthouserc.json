@@ -1,12 +1,5 @@
 {
     "ci": {
-        "collect": {
-            "url": [
-                "http://${SERVER_IP}",
-                "http://${SERVER_IP}/home"
-            ],
-            "numberOfRuns": 1
-        },
         "assert": {
             "assertions": {
                 "categories:performance": [
