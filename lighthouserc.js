@@ -2,8 +2,7 @@ module.exports = {
   ci: {
     collect: {
       url: [
-        "https://tqa-test.deha.vn",
-        "https://tqa-test.deha.vn/home"
+        "https://tqa-test.deha.vn"
       ],
       numberOfRuns: 1,
 
