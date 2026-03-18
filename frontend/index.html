@@ -6,6 +6,18 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Employee management system to create, edit, search and delete employees." />
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'none';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline' https:;
+    img-src 'self' data: https:;
+    connect-src 'self' https://tqa-test.deha.vn;
+    font-src 'self' https:;
+    object-src 'none';
+    base-uri 'self';
+    frame-ancestors 'none';
+    form-action 'self';
+  " />
   <title>Employee System</title>
 </head>
 
